@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
@@ -19,24 +19,26 @@ class Task(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=True)
 
+@app.route('/')
+def index():
+    tasks = Task.query.all()
+    return render_template('index.html', tasks=tasks)
+
 @app.route('/tasks', methods=['POST'])
 def add_task():
-    data = request.get_json()
-    new_task = Task(title=data['title'], description=data.get('description'))
+    title = request.form['title']
+    description = request.form['description']
+    new_task = Task(title=title, description=description)
     db.session.add(new_task)
     db.session.commit()
-    return jsonify({'message': 'Task created successfully'}), 201
+    return redirect(url_for('index'))
 
-@app.route('/tasks', methods=['GET'])
-def get_tasks():
-    tasks = Task.query.all()
-    return jsonify([{'id': task.id, 'title': task.title, 'description': task.description} for task in tasks])
-
-# Temporary route to initialize the database
-@app.route('/initdb')
+@app.route('/initdb', methods=['GET', 'POST'])
 def initdb():
-    db.create_all()
-    return "Database initialized!"
+    if request.method == 'POST':
+        db.create_all()
+        return "Database initialized!"
+    return render_template('initdb.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
