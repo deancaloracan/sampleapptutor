@@ -107,4 +107,4 @@ def edit_task(todo_id):
 if __name__ == '__main__': # Define port, host, and debugging while running
     with app.app_context():  # Add this line to provide an application context
         db.create_all()  # Create database tables if they don't exist
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
