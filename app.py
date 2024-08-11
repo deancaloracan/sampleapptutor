@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import inspect
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env file
-load_dotenv()
+load_dotenv()  # ensure this is correctly calling the dotenv
+print(os.getenv('DATABASE_URL'))  # This will show you the current DATABASE_URL being loaded
 
 app = Flask(__name__) # Initialize Flask
 
